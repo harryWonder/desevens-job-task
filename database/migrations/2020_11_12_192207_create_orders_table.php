@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->integer('customer_id');
             $table->integer('driver_id')->nullable();
-            $table->string('products');
+            $table->json('products');
             $table->string('shipping');
             $table->float('amount');
             $table->text('reference');

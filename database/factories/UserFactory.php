@@ -21,7 +21,7 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'first_name' => $faker->name,
         'last_name' => $faker->name,
-        'phone_number' => 07012316289,
+        'phone_number' => '07012316289',
         'email' => 'stephenilori458@gmail.com',
         'status' => 1,
         'email_verified_at' => now(),
