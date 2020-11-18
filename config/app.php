@@ -52,9 +52,9 @@ return [
     |
     */
 
-    'url' => env('APP_URL', ''),
+    'url' => env('APP_URL', 'https://shielded-stream-86154.herokuapp.com/'),
 
-    'asset_url' => env('ASSET_URL', ''),
+    'asset_url' => env('ASSET_URL', 'https://shielded-stream-86154.herokuapp.com/'),
 
     /*
     |--------------------------------------------------------------------------
