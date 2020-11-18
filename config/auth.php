@@ -44,16 +44,19 @@ return [
         'api' => [
             'driver' => 'passport',
             'provider' => 'users',
+            'throttle' => 60,
         ],
 
         'api-admin' => [
           'driver' => 'passport',
           'provider' => 'admins'
+          'throttle' => 60,
         ],
 
         'api-driver' => [
           'driver' => 'passport',
           'provider' => 'drivers'
+          'throttle' => 60,
         ]
     ],
 

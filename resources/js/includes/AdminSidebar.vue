@@ -44,7 +44,9 @@
   export default {
     methods: {
       logout() {
-        LocalStore.admin().delete();
+        LocalStore.admin().get('adminCredentials').then((doc) => {
+          LocalStore.admin().remove(doc);
+        });
         this.$router.push({
           name: 'Welcome'
         });

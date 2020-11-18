@@ -35,7 +35,9 @@ import axios from 'axios';
 export default {
   methods: {
     logout() {
-      LocalStore.customer().delete();
+      LocalStore.customer().get('customer').then((doc) => {
+        LocalStore.customer().remove(doc);
+      });
       this.$router.push({
         name: 'Welcome'
       });

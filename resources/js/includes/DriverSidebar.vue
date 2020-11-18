@@ -33,7 +33,9 @@ import LocalStore from '../store/local';
 export default {
   methods: {
     logout() {
-      LocalStore.driver().delete();
+      LocalStore.driver().get('driverCredentials').then((doc) => {
+        LocalStore.driver().remove(doc);
+      });
       this.$router.push({
         name: 'Welcome'
       });
