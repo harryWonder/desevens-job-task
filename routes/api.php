@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 // Token Verification || User...
 Route::middleware('auth:api')->get('/v1/user', function (Request $request) {
   if (isset($request->user()->last_name) && isset($request->user()->first_name) && isset($request->user()->status) == 1) {
-    $Response = ['status' => 'isValid']
+    $Response = ['status' => 'isValid'];
     return response()->json($Response, 200);
   } else {
-    $Response = ['status' => 'inValid']
+    $Response = ['status' => 'inValid'];
     return response()->json($Response, 401);
   }
 });
@@ -28,10 +28,10 @@ Route::middleware('auth:api')->get('/v1/user', function (Request $request) {
 // Token Verification || Admin...
 Route::middleware('auth:api-admin')->get('/v1/admin', function (Request $request) {
   if (isset($request->user()->roles) && !empty($request->user()->roles)) {
-    $Response = ['status' => 'isValid']
+    $Response = ['status' => 'isValid'];
     return response()->json($Response, 200);
   } else {
-    $Response = ['status' => 'inValid']
+    $Response = ['status' => 'inValid'];
     return response()->json($Response, 401);
   }
 });
@@ -39,10 +39,10 @@ Route::middleware('auth:api-admin')->get('/v1/admin', function (Request $request
 // Token Verification || Driver...
 Route::middleware('auth:api-driver')->get('/v1/driver', function (Request $request) {
   if (isset($request->user()->driver_id) && !empty($request->user()->driver_id)) {
-    $Response = ['status' => 'isValid']
+    $Response = ['status' => 'isValid'];
     return response()->json($Response, 200);
   } else {
-    $Response = ['status' => 'inValid']
+    $Response = ['status' => 'inValid'];
     return response()->json($Response, 401);
   }
 });
