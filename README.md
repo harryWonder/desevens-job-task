@@ -30,4 +30,7 @@ https://shielded-stream-86154.herokuapp.com/#/admin/login
 ## Driver Login
 https://shielded-stream-86154.herokuapp.com/#/driver/login
 
+## Note
+When you create an account, The account is automatically activated. I did this because of some of the issues I faced with my Sendgrid account. You can go ahead and login to proceed.
+
 Good Luck. Ilori Stephen A
