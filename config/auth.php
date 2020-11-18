@@ -49,13 +49,13 @@ return [
 
         'api-admin' => [
           'driver' => 'passport',
-          'provider' => 'admins'
+          'provider' => 'admins',
           'throttle' => 60,
         ],
 
         'api-driver' => [
           'driver' => 'passport',
-          'provider' => 'drivers'
+          'provider' => 'drivers',
           'throttle' => 60,
         ]
     ],
