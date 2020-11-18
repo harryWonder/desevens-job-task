@@ -31,24 +31,6 @@
 <script type="text/javascript">
 import LocalStore from '../store/local';
 export default {
-  mounted() {
-    let __this = this;
-    LocalStore.driver().get('driverCredentials').then(async (doc) => {
-      await axios.get(this.$baseUrl + '/v1/driver', {
-        headers: {
-          Authorization: 'Bearer ' + doc.token
-        }
-      }).then((doc) => {/*  */}).catch((e) => {
-        __this.$router.push({
-          name: 'Welcome'
-        });
-      });
-    }).catch((e) => {
-      __this.$router.push({
-        name: 'Welcome'
-      });
-    });
-  },
   methods: {
     logout() {
       LocalStore.driver().delete();

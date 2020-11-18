@@ -33,24 +33,6 @@ import LocalStore from '../store/local';
 import axios from 'axios';
 
 export default {
-  mounted() {
-    let __this = this;
-    LocalStore.customer().get('customer').then(async (doc) => {
-      await axios.get(this.$baseUrl + '/v1/user', {
-        headers: {
-          Authorization: 'Bearer ' + doc.accessToken
-        }
-      }).then((doc) => {/*  */}).catch((e) => {
-        __this.$router.push({
-          name: 'Welcome'
-        });
-      });
-    }).catch((e) => {
-      __this.$router.push({
-        name: 'Welcome'
-      });
-    });
-  },
   methods: {
     logout() {
       LocalStore.customer().delete();
