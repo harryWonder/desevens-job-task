@@ -59,7 +59,7 @@ class AuthController extends Controller
     // Prepare The Mail Payload...
     $MailPayload = new \stdClass();
     $MailPayload->name = $User->last_name . ' ' . $User->first_name;
-    $MailPayload->url = "/activate/customer/account/" . base64_encode($Token);
+    $MailPayload->url = "/api/v1/activate/customer/account/" . base64_encode($Token);
 
     // Send Out The Mail To The User...
     Notification::send($User, new \App\Notifications\WelcomeToDesevens($MailPayload));
@@ -110,7 +110,7 @@ class AuthController extends Controller
             $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
             // Return an HTTP Redirect...
-            return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
+            return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         case 'minute':
           $User->status = 1;
@@ -125,7 +125,7 @@ class AuthController extends Controller
           $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
           // Return an HTTP Redirect...
-          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
+          return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         case 'minutes':
           $User->status = 1;
@@ -141,7 +141,7 @@ class AuthController extends Controller
           $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
           // Return an HTTP Redirect...
-          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
+          return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         default:
           // The Token Has Expired...
@@ -149,7 +149,7 @@ class AuthController extends Controller
           $this->Response['message'] = 'Expired Token.';
 
           // Return an HTTP Redirect...
-          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=&emailAddress=');
+          return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#') . '/user/dashboard?access_token=&emailAddress=');
           break;
       }
     }

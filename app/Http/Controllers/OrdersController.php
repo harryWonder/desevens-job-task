@@ -189,7 +189,7 @@ class OrdersController extends Controller
 
           // since both of these has been created, we redirect back to the user dashboard page and clear the cart...
           // http://127.0.0.1:8000/api/v1/user/verify/purchase?trxref=z8oiwq09ow&reference=z8oiwq09ow
-          return redirect(env('CLIENT_URL', 'http://127.0.0.1:8000/#/user/orders'));
+          return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#/user/orders'));
         }
 
         // since the transaction failed...
@@ -201,10 +201,10 @@ class OrdersController extends Controller
         ]);
 
         // Mail The User Saying The Transaction Failed...
-        return redirect(env('CLIENT_URL', 'http://127.0.0.1:8000/#/user/orders'));
+        return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#/user/orders'));
       }
 
-      return redirect(env('CLIENT_URL', 'http://127.0.0.1:8000/#/'));
+      return redirect(env('CLIENT_URL', 'https://shielded-stream-86154.herokuapp.com/#/user/orders'));
     }
 
     /**
