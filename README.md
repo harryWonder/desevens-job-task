@@ -21,7 +21,7 @@ Email: iloristephen180@yahoo.com
 passwod: password
 
 ## User Credentials
-Email: stephenilori458@yahoo.com
+Email: stephenilori458@gmail.com
 passwod: password
 
 ## Driver Credentials
