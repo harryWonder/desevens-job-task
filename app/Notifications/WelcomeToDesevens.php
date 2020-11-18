@@ -45,7 +45,7 @@ class WelcomeToDesevens extends Notification
                     ->greeting('Welcome To Desevens')
                     ->line('Congratulations on creating a Desevens Account ' . $this->Payload->name . '.')
                     ->line('We are delighted to have you join us. However, we need one more thing from. Please, Kindly Activate Your Account By Using The Link Below.')
-                    ->action('Notification Action', url('/'))
+                    ->action('Notification Action', url($this->Payload->url))
                     ->line('If this process was not initiated by you. please contact us at info@desevensdigital.com');
     }
 }

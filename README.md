@@ -1,21 +1,3 @@
-### LARAVEL & VUEJS Fullstack Application
+### Desevens Senior PHP Developer (Task)
 
-This lesson covers how to build a Full-stack application using Laravel & Vuejs. The requirements are pretty much very simple once you follow the list I have laid out below.
-
-This is like you usual laravel application. The only difference is that you will have to install some javascript dependencies this time.
-
-### Steps
-
-1. Fork or clone this project. Whichever works for you.
-2. Open the project directory in your terminal or command prompt and enter the commands below.
-
-   `composer install`
-   `npm install`
-   `php artisan passport:install`
-   `npm run watch`
-
-3. After this you have to open a seperate terminal window and run **Laravel's favourite artisan command**. `php artisan serve.`
-
-4. Read up the blog on [Learning Dollars](https://blog.learningdollars.com/?p=7737&preview=true) to learn how to deploy this to heroku.
-
-Thanks for reading. Happy hacking guys!
+My name is Ilori Stephen Adejuwon and I am full-stack software developer. This **Git Branch (Main)** is the codebase that powers the live application on **Heroku**. The project is built on top of **Laravel** with some **Npm Packages** installed. To have this project on development, please, **Clone** the **development branch** and follow the guidelines below.

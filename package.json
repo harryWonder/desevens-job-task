@@ -30,6 +30,7 @@
     },
     "dependencies": {
         "ckeditor4-vue": "^1.1.0",
+        "pouchdb": "^7.2.2",
         "sweetalert": "^2.1.2",
         "vue-router": "^3.3.4",
         "vuex": "^3.4.0"

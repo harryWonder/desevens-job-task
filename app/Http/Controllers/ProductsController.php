@@ -20,13 +20,13 @@ class ProductsController extends Controller
    * @param  Request  $request
    * @return Object JSON
    */
-    public function createProduct(Request $request)
+    public function create(Request $request)
     {
       // Create The Validator Object...
       $Validator = Validator::make($request->all(), [
-        'name' => 'string|required|max:20',
+        'name' => 'string|required',
         'description' => 'string|required|max:100',
-        'banner' => 'mimes:jpeg,jpg,png,gif|required|max:5000',
+        'banner' => 'mimes:jpeg,jpg,png,gif|required|max:100000',
         'category_id' => 'numeric|required',
         'quantity' => 'numeric|required',
         'delivery_time' => 'string|required',
@@ -42,24 +42,25 @@ class ProductsController extends Controller
         return response()->json($this->Response, 400);
       }
 
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Just In Case Any Errors Were Thrown...
       try {
         // Fetch The File From The Request....
-        $uploadedFileUrl = Cloudinary::uploadFile($request->file('banner')->getRealPath())->getSecurePath();
+        $Banner = $request->banner;
+        $BannerTitle = basename($Banner->getClientOriginalName());
+        $BannerExtension = $Banner->getClientOriginalExtension();
+
+        $BannerTitle = str_replace(' ', '_', $BannerTitle);
+        $BannerTitle = $BannerTitle . '_' . 'podcast_' . time() . '_podcast' . '.' . $BannerExtension;
+        $Banner->move('public/', $BannerTitle);
+
+        // Upload The File...
+        $uploadedFileUrl = Cloudinary::uploadFile('public/' . $BannerTitle)->getSecurePath();
         $Product = Product::create([
           'name' => $this->sanitizeFormInput($request->input('name')),
           'slug' => Str::slug($this->sanitizeFormInput($request->input('name'))),
           'description' => $this->sanitizeFormInput($request->input('description')),
           'banner' => $uploadedFileUrl,
+          'file_path' => 'public/' . $BannerTitle,
           'category_id' => $this->sanitizeFormInput($request->input('category_id')),
           'quantity' => $this->sanitizeFormInput($request->input('quantity')),
           'delivery_time' => $this->sanitizeFormInput($request->input('delivery_time')),
@@ -94,7 +95,7 @@ class ProductsController extends Controller
     {
       // Create The Validator Object...
       $Validator = Validator::make($request->all(), [
-        'name' => 'string|required|max:20',
+        'name' => 'string|required',
         'description' => 'string|required|max:100',
         'banner' => 'mimes:jpeg,jpg,png,gif|nullable|max:5000',
         'category_id' => 'numeric|required',
@@ -110,15 +111,6 @@ class ProductsController extends Controller
 
         $this->Response['errors'] = $Validator->errors();
         return response()->json($this->Response, 400);
-      }
-
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
       }
 
       // Check If The Product Exists...
@@ -137,20 +129,31 @@ class ProductsController extends Controller
 
         // Check If A File Was Uploaded...
         $uploadedFileUrl = $Product->banner;
+        $Product->file_path = $Product->file_path;
         if ($request->hasFile('banner')) {
           // Fetch The File From The Request....
-          $uploadedFileUrl = Cloudinary::uploadFile($request->file('banner')->getRealPath())->getSecurePath();
+          $Banner = $request->banner;
+          $BannerTitle = basename($Banner->getClientOriginalName());
+          $BannerExtension = $Banner->getClientOriginalExtension();
+
+          $BannerTitle = str_replace(' ', '_', $BannerTitle);
+          $BannerTitle = $BannerTitle . '_' . 'podcast_' . time() . '_podcast' . '.' . $BannerExtension;
+          $Banner->move('public/', $BannerTitle);
+
+          // Upload The File To Cloduinary
+          $uploadedFileUrl = Cloudinary::uploadFile('public/' . $BannerTitle)->getSecurePath();
+          $Product->file_path = 'public/' . $BannerTitle;
         }
 
         // Proceed With The Update....
         $Product->name = $this->sanitizeFormInput($request->input('name'));
         $Product->slug = Str::slug($this->sanitizeFormInput($request->input('name')));
         $Product->description = $this->sanitizeFormInput($request->input('description'));
-        $Product->banner => $uploadedFileUrl;
+        $Product->banner = $uploadedFileUrl;
         $Product->category_id = $this->sanitizeFormInput($request->input('category_id'));
         $Product->quantity = $this->sanitizeFormInput($request->input('quantity'));
         $Product->delivery_time = $this->sanitizeFormInput($request->input('delivery_time'));
-        $Product->amount = $this->sanitizeFormInput($request->input('amount');
+        $Product->amount = $this->sanitizeFormInput($request->input('amount'));
 
         $Product->save();
 
@@ -180,17 +183,8 @@ class ProductsController extends Controller
      */
     public function fetchProducts(Request $request)
     {
-      // Check The Request Initiate...
-      if (empty($request->admin()) || empty($request->user())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Fetch All The Products In A Paginated Order...
-      $Products = Product::orderBy('id', 'desc')->paginate(20);
+      $Products = Product::orderBy('id', 'desc')->get();
       if (empty($Products)) {
         $this->Response['status'] = 204;
         $this->Response['message'] = 'No Records.';
@@ -252,23 +246,19 @@ class ProductsController extends Controller
      */
     public function deleteProduct(Request $request, $id)
     {
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Find The Product...
-      $Product = Product::find($this->sanitizeFormInput($id))->first();
+      $Product = Product::find($this->sanitizeFormInput($id));
       if (empty($Product)) {
         $this->Response['status'] = 204;
         $this->Response['message'] = 'Failed To Fetch The Product.';
 
         // Prepare The Http Status Code...
         return response()->json($this->Response, 204);
+      }
+
+      // Delete The Local Image...
+      if (file_exists($Product->file_path)) {
+        unlink($Product->file_path);
       }
 
       // Delete The Product...

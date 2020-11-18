@@ -29,8 +29,8 @@ class AuthController extends Controller
       'firstName' => 'string|required|max:20',
       'lastName' => 'string|required|max:20',
       'emailAddress' => 'email|required|unique:users,email',
-      'phoneNumber' => 'numeric|required|max:11|unique:users,phone_number',
-      'password' => 'string"required|min:7|max:20'
+      'phoneNumber' => 'string|required|max:11|unique:users,phone_number',
+      'password' => 'string|required|min:7|max:20'
     ]);
 
     // Check The Validator Status...
@@ -43,7 +43,7 @@ class AuthController extends Controller
     }
 
     // Create The Signup Token...
-    $Token = Str::make(40);
+    $Token = Str::random(40);
 
     // Since The Validator Passes, We create the account and send the user a mail...
     $User = User::create([
@@ -51,6 +51,7 @@ class AuthController extends Controller
       'last_name' => $this->sanitizeFormInput($request->input('lastName')),
       'email' => $this->sanitizeFormInput($request->input('emailAddress')),
       'token' => $Token,
+      'status' => 1,
       'phone_number' => $this->sanitizeFormInput($request->input('phoneNumber')),
       'password' => password_hash($this->sanitizeFormInput($request->input('password')), PASSWORD_BCRYPT)
     ]);
@@ -58,7 +59,7 @@ class AuthController extends Controller
     // Prepare The Mail Payload...
     $MailPayload = new \stdClass();
     $MailPayload->name = $User->last_name . ' ' . $User->first_name;
-    $MailPayload->url = "/activate-account/" . base64_encode($Token);
+    $MailPayload->url = "/activate/customer/account/" . base64_encode($Token);
 
     // Send Out The Mail To The User...
     Notification::send($User, new \App\Notifications\WelcomeToDesevens($MailPayload));
@@ -82,7 +83,7 @@ class AuthController extends Controller
     $Token = base64_decode($token);
 
     // Fetch The User From The User...
-    $User = User::where('token', $this->sanitizeFormInput($Token))->first();
+    $User = User::where('token', $this->sanitizeFormInput($Token))->where('status', 0)->first();
 
     // Check If A User With The Token Exists....
     if (empty($User)) {
@@ -94,7 +95,7 @@ class AuthController extends Controller
 
     // Check If The Token Is Still Valid...
     $issuedAt = explode(' ', $User->updated_at->diffForHumans());
-    if ($issuedAt[0] <= 5) {
+    if ($issuedAt[0] <= 10) {
       switch ($issuedAt[1]) {
         case 'seconds':
             $User->status = 1;
@@ -102,12 +103,14 @@ class AuthController extends Controller
 
             // Unset The Token Field...
             unset($User->token);
+            unset($User->password);
+
             $this->Response['status'] = 200;
             $this->Response['data'] = $User;
             $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
-            // Return an HTTP Response...
-            return response()->json($this->Response, 200);
+            // Return an HTTP Redirect...
+            return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         case 'minute':
           $User->status = 1;
@@ -115,12 +118,14 @@ class AuthController extends Controller
 
           // Unset The Token Field...
           unset($User->token);
+          unset($User->password);
+
           $this->Response['status'] = 200;
           $this->Response['data'] = $User;
           $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
-          // Return an HTTP Response...
-          return response()->json($this->Response, 200);
+          // Return an HTTP Redirect...
+          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         case 'minutes':
           $User->status = 1;
@@ -128,20 +133,23 @@ class AuthController extends Controller
 
           // Unset The Token Field...
           unset($User->token);
+          unset($User->password);
+
           $this->Response['status'] = 200;
           $this->Response['data'] = $User;
           $this->Response['message'] = 'Account Created Successfully.';
           $this->Response['data']['access_token'] = $User->createToken('userAccess')->accessToken;
 
-          // Return an HTTP Response...
-          return response()->json($this->Response, 200);
+          // Return an HTTP Redirect...
+          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=' . $this->Response['data']['access_token'] . '&emailAddress=' . $User->emailAddress);
           break;
         default:
           // The Token Has Expired...
           $this->Response['status'] = 400;
           $this->Response['message'] = 'Expired Token.';
 
-          return response()->json($this->Response, 400);
+          // Return an HTTP Redirect...
+          return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=&emailAddress=');
           break;
       }
     }
@@ -150,7 +158,8 @@ class AuthController extends Controller
     $this->Response['status'] = 400;
     $this->Response['message'] = 'Expired Token.';
 
-    return response()->json($this->Response, 400);
+    // Return an HTTP Redirect...
+    return redirect(env('CLIENT_URL') . '/user/dashboard?access_token=&emailAddress=');
   }
 
   /**
@@ -162,7 +171,7 @@ class AuthController extends Controller
   public function resendToken(Request $request, $emailAddress)
   {
     // Check If The Email Address Exists...
-    $User = User::where('token', $this->sanitizeFormInput($emailAddress))->first();
+    $User = User::where('token', $this->sanitizeFormInput($emailAddress))->where('status', 0)->first();
 
     if (empty($User)) {
       $this->Response['status'] = 401;
@@ -173,7 +182,7 @@ class AuthController extends Controller
     }
 
     // Create A New Token To Be Issued....
-    $Token = Str::make(40);
+    $Token = Str::random(40);
 
     // Update The User Field...
     $User->token = $Token;
@@ -215,14 +224,24 @@ class AuthController extends Controller
       return response()->json($this->Response, 400);
     }
 
+    // Get The User Model....
+    $User = User::where('email', $this->sanitizeFormInput($request->input('emailAddress')))->where('status', 1)->first();
+    if (empty($User)) {
+      $this->Response['status'] = 400;
+      $this->Response['message'] = 'Password / Email Address Mismatch';
+
+      $this->Response['errors'] = ['user' => ['Password / Email Address Mismatch']];
+      return response()->json($this->Response, 400);
+    }
 
     // Validate The Email Address && The Password...
-    if (Auth::attempt(['email' => $this->sanitizeFormInput($request->input('emailAddress')), 'password' => $this->sanitizeFormInput($request->input('password')), 'status' => 1])) {
+    if (password_verify($this->sanitizeFormInput($request->input('password')), $User->password)) {
       // Get The User Object....
       $User->updated_at = date('Y-m-d H:i:s');
 
       // Prepare The Response Body....
       unset($User->token);
+      unset($User->password);
       $this->Response['data'] = $User;
       $this->Response['access_token'] = $User->createToken('userAccess')->accessToken;
       $this->Response['status'] = 200;
@@ -263,7 +282,7 @@ class AuthController extends Controller
     }
 
     // Fetch The Admin Login Details...
-    $Admin = Admin::where('email', $this->sanitizeFormInput('emailAddress'))->first();
+    $Admin = Admin::where('email', $this->sanitizeFormInput($request->input('emailAddress')))->first();
     if (empty($Admin)) {
       $this->Response['status'] = 401;
       $this->Response['message'] = 'Unauthorized Access';
@@ -304,7 +323,7 @@ class AuthController extends Controller
   {
     // Create The Validation Object...
     $Validator = Validator::make($request->all(), [
-      'emailAddress' => 'email|required',
+      'driverId' => 'string|required',
       'password' => 'string|required'
     ]);
 
@@ -318,7 +337,7 @@ class AuthController extends Controller
     }
 
     // Fetch The Admin Login Details...
-    $Driver = Driver::where('email', $this->sanitizeFormInput('emailAddress'))->first();
+    $Driver = Driver::where('driver_id', $this->sanitizeFormInput($request->input('driverId')))->first();
     if (empty($Driver)) {
       $this->Response['status'] = 401;
       $this->Response['message'] = 'Unauthorized Access';
@@ -334,7 +353,7 @@ class AuthController extends Controller
 
       // Prepare The Response Body....
       $this->Response['data'] = $Driver;
-      $this->Response['access_token'] = $Driver->createToken('adminAccess')->accessToken;
+      $this->Response['access_token'] = $Driver->createToken('driverAccess')->accessToken;
       $this->Response['status'] = 200;
       $this->Response['message'] = 'Login Successfull';
 

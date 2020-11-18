@@ -12,7 +12,3 @@
     }
   }
 </script>
-
-<style media="screen">
-
-</style>

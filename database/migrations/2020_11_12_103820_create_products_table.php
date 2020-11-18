@@ -21,7 +21,7 @@ class CreateProductsTable extends Migration
             $table->string('banner');
             $table->integer('category_id');
             $table->integer('quantity');
-            $table->integer('delivery_time');
+            $table->string('delivery_time');
             $table->float('amount');
             $table->timestamps();
         });

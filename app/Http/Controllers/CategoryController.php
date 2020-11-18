@@ -34,15 +34,6 @@ class CategoryController extends Controller
         return response()->json($this->Response, 400);
       }
 
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Create The Category....
       $slug = Str::slug($this->sanitizeFormInput($request->input('name')));
       $Category = Category::create([
@@ -66,15 +57,6 @@ class CategoryController extends Controller
      */
     public function fetchCategory(Request $request, $slug)
     {
-        // Check The Request Initiate...
-        if (empty($request->admin())) {
-          $this->Response['status'] = 401;
-          $this->Response['message'] = 'Unauthorized Access.';
-
-          $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-          return response()->json($this->Response, 401);
-        }
-
         // Check If The Slug Exist...
         $slug = $this->sanitizeFormInput($slug);
         $Category = Category::where('slug', $slug)->first();
@@ -96,6 +78,25 @@ class CategoryController extends Controller
         return response()->json($this->Response, 200);
     }
 
+    public function fetchCategories()
+    {
+      // Fetch All The Categories....
+      $Categories = Category::orderBy('id', 'desc')->get();
+      if (empty($Categories)) {
+        $this->Response['status'] = 204;
+        $this->Response['message'] = 'No Categories To Fetch';
+
+        return response()->json($this->Response, 204);
+      }
+
+      // Return All The Categories...
+      $this->Response['status'] = 200;
+      $this->Response['message'] = 'Successfully Fetched ' . count($Categories) . ' records';
+      $this->Response['data'] = $Categories;
+
+      return response()->json($this->Response, 200);
+    }
+
     /**
      * This Method Updates A Category....
      *
@@ -106,12 +107,12 @@ class CategoryController extends Controller
     {
       // Create The Validator Object....
       $Validator = Validator::make($request->all(), [
-        'name' => 'string|required|max:20|unique:categories',
+        'name' => 'string|required|unique:categories',
         'slug' => 'string|required'
       ]);
 
       // Check If The Slug Exist...
-      $slug = $this->sanitizeFormInput($slug);
+      $slug = $this->sanitizeFormInput($request->input('slug'));
       $Category = Category::where('slug', $slug)->first();
 
       // Check For Errors...
@@ -123,8 +124,6 @@ class CategoryController extends Controller
         return response()->json($this->Response, 400);
       }
 
-      // Update The Category...
-      $Category = Category::where('slug', $this->sanitizeFormInput($request->input('slug')))->first();
       if (empty($Category)) {
         $this->Response['status'] = 204;
         $this->Response['message'] = 'Failed To Fetch The Selected Category.';
@@ -135,7 +134,7 @@ class CategoryController extends Controller
 
       // Save The Category...
       $Category->name = $this->sanitizeFormInput($request->input('name'));
-      $Category->slug = Str::slug($this->sanitizeFormInput($request->input('slug')));
+      $Category->slug = Str::slug($this->sanitizeFormInput($request->input('name')));
       $Category->updated_at = date('Y-m-d H:i:s');
       $Category->save();
 
@@ -155,15 +154,6 @@ class CategoryController extends Controller
      */
     public function updateStatus(Request $request, $slug, $status)
     {
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Check If The Slug Exist...
       $slug = $this->sanitizeFormInput($slug);
       $Category = Category::where('slug', $slug)->first();
@@ -177,7 +167,7 @@ class CategoryController extends Controller
       }
 
       // Update The Status Field...
-      if ($type == 'disable') {
+      if ($status == 'disable') {
         $Category->status = 0;
         $Category->updated_at = date('Y-m-d H:i:s');
       } else {
@@ -205,15 +195,6 @@ class CategoryController extends Controller
      */
     public function deleteCategory(Request $request, $slug)
     {
-      // Check The Request Initiate...
-      if (empty($request->admin())) {
-        $this->Response['status'] = 401;
-        $this->Response['message'] = 'Unauthorized Access.';
-
-        $this->Response['errors'] = ['access' => ['Unauthorized Access']];
-        return response()->json($this->Response, 401);
-      }
-
       // Check If The Slug Exist...
       $slug = $this->sanitizeFormInput($slug);
       $Category = Category::where('slug', $slug)->first();
@@ -227,6 +208,12 @@ class CategoryController extends Controller
       }
 
       // Fetch All Products From ThIS Category && Delete Them...
+      $Products = $Category->products;
+      if (!empty($Products)) {
+        for ($i=0; $i < count($Products); $i++) {
+          $Products[$i]->delete();
+        }
+      }
 
       // Delete The Category...
       $Category->delete();
