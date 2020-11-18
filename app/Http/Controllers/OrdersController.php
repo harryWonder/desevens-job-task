@@ -14,6 +14,12 @@ use Illuminate\Support\Facades\Http;
 
 class OrdersController extends Controller
 {
+    /**
+     * This Method Initializes A Customer Order..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function initializeOrder(Request $request)
     {
       $Products = $request->products;
@@ -45,6 +51,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 400);
     }
 
+    /**
+     * This Method Approves A Customer Order By The Admin..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function approveOrder(Request $request, $orderId, $type)
     {
       $Order = Order::find($this->sanitizeFormInput($orderId));
@@ -71,6 +83,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 200);
     }
 
+    /**
+     * This Method Allows A Driver Accept An Approved By The Admin..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function takeOrder(Request $request, $orderId, $driverId)
     {
       $Order = Order::find($this->sanitizeFormInput($orderId));
@@ -95,6 +113,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 200);
     }
 
+    /**
+     * This Method Completes A Customer Order By A Driver After Admin Approval..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function completeOrder(Request $request, $orderId, $driverId)
     {
       $Driver = Driver::where('driver_id', $this->sanitizeFormInput($driverId))->first();
@@ -124,6 +148,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 200);
     }
 
+    /**
+     * This Method Veirfies A Customer Paystack Transaction..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function verifyTransaction(Request $request)
     {
       $response = Http::withToken('sk_test_afe56f68a8cd6beb75611aa579c32f20d542b01b')->get('https://api.paystack.co/transaction/verify/' . $request->reference);
@@ -177,6 +207,12 @@ class OrdersController extends Controller
       return redirect(env('CLIENT_URL', 'http://127.0.0.1:8000/#/'));
     }
 
+    /**
+     * This Method Fetches A Customer Order..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function fetchOrdersCustomer(Request $request, $email)
     {
       $User = User::where('email', $this->sanitizeFormInput($email))->first();
@@ -200,6 +236,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 204);
     }
 
+    /**
+     * This Method Returns All Approved Orders Needed By A Driver..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function fetchOrdersDriver(Request $request)
     {
       $Orders = Order::where('status', 1)->orderBy('id', 'desc')->get();
@@ -219,6 +261,12 @@ class OrdersController extends Controller
       return response()->json($this->Response, 204);
     }
 
+    /**
+     * This Method Returns All Approved Orders Needed For The Admin..
+     *
+     * @param  Request $request
+     * @return JSON $Response
+     */
     public function fetchOrdersAdmin(Request $request)
     {
       $Orders = Order::orderBy('id', 'desc')->get();

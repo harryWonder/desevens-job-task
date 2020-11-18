@@ -14,6 +14,12 @@ class Controller extends BaseController
     // Reusable Properties
     protected $Response = array( 'status' => 200, 'message' => '', 'data' => '', 'errors' => [] );
 
+    /**
+     * This Method Sanitizies A String To Make It Harmless..
+     *
+     * @param  Request, String: $data
+     * @return String $data
+     */
     protected function sanitizeFormInput($data)
     {
       return htmlentities(stripcslashes(strip_tags($data)));

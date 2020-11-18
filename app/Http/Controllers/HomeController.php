@@ -9,6 +9,13 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
+
+    /**
+     * This Method Fetches All Categories.
+     *
+     * @param  Request Null
+     * @return JSON $Response
+     */
     public function fetchCategories()
     {
       // Fetch All The Categories....
