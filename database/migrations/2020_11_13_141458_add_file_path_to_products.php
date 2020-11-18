@@ -26,7 +26,7 @@ class AddFilePathToProducts extends Migration
     public function down()
     {
         Schema::table('products', function (Blueprint $table) {
-            $tabke->dropColumn('file_path');
+            $table->dropColumn('file_path');
         });
     }
 }
