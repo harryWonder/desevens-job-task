@@ -172,6 +172,12 @@
 
               this.isError = false;
               this.isSuccess = true;
+
+              // clear the timeout...
+              setTimeout(() => {
+                this.isSuccess = false;
+                this.isError = false;
+              }, 3000);
             } else {
               this.orders = this.orders.map((el) => {
                 if (el.id == orderId) {
@@ -183,11 +189,23 @@
 
               this.isError = false;
               this.isSuccess = true;
+
+              // clear the timeout...
+              setTimeout(() => {
+                this.isSuccess = false;
+                this.isError = false;
+              }, 3000);
             }
           }
         } catch (e) {
           this.isError = false;
           this.isSuccess = true;
+
+          // clear the timeout...
+          setTimeout(() => {
+            this.isSuccess = false;
+            this.isError = false;
+          }, 3000);
         }
       },
       viewOrder(products) {

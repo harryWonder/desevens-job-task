@@ -170,6 +170,12 @@
         } catch (e) {
           this.isError = true;
           this.isSuccess = false;
+
+          // clear the timeout...
+          setTimeout(() => {
+            this.isSuccess = false;
+            this.isError = false;
+          }, 3000);
         }
       },
       async completeOrder(orderId) {
@@ -192,6 +198,12 @@
         } catch (e) {
           this.isError = true;
           this.isSuccess = false;
+
+          // clear the timeout...
+          setTimeout(() => {
+            this.isSuccess = false;
+            this.isError = false;
+          }, 3000);
         }
       },
       openOrder(order) {

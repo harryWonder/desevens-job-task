@@ -161,7 +161,7 @@
     },
     methods: {
       async createCategory() {
-        await axios.post(this.$baseUrl + '/admin/create/category', this.category, {
+        await axios.post(this.$baseUrl + 'admin/create/category', this.category, {
           headers: {
             Accept: 'application/json',
             Authorization: 'Bearer ' + this.adminToken,
