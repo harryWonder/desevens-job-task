@@ -11,7 +11,7 @@ class AdminTableSeeder extends Seeder
      */
     public function run()
     {
-      return App\Driver::create([
+      return App\Admin::create([
         'email' => 'iloristephen180@yahoo.com',
         'status' => 1,
         'password' => password_hash('password', PASSWORD_BCRYPT)
