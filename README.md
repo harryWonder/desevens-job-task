@@ -16,4 +16,18 @@ This Branch (Main/Master) is the codebase powering the active or live applicatio
 9. After the prompt or new terminal session, run the following command. **php artisan migrate && php artisan db:seed**.
 10. You can now go ahead and view your app in the browser.
 
+## Admin Credentials
+Email: iloristephen180@yahoo.com
+passwod: password
+
+## Driver Credentials
+Driver Id: D7-cHcyd,
+password: password
+
+## Admin Url
+https://shielded-stream-86154.herokuapp.com/#/admin/login
+
+## Driver Login
+https://shielded-stream-86154.herokuapp.com/#/driver/login
+
 Good Luck. Ilori Stephen A
