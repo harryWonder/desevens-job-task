@@ -20,6 +20,10 @@ This Branch (Main/Master) is the codebase powering the active or live applicatio
 Email: iloristephen180@yahoo.com
 passwod: password
 
+## User Credentials
+Email: stephenilori458@yahoo.com
+passwod: password
+
 ## Driver Credentials
 Driver Id: D7-cHcyd,
 password: password
