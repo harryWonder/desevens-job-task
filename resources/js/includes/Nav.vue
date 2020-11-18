@@ -15,19 +15,19 @@
           </template>
         </li>
         <li class="st-nav-section st-nav-secondary nav-item">
-          <a class="btn btn-rounded btn-outline mr-3 px-3" href="" target="_blank" v-if="!isLoggedIn">
+          <router-link class="btn btn-rounded btn-outline mr-3 px-3" :to="{ name: 'Login' }" v-if="!isLoggedIn">
             <i class="fas fa-sign-in-alt d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Login</span>
-          </a>
-          <a class="btn btn-rounded btn-outline mr-3 px-3" href="" target="_blank" v-if="!isLoggedIn">
+          </router-link>
+          <router-link class="btn btn-rounded btn-outline mr-3 px-3" :to="{ name: 'Register' }" v-if="!isLoggedIn">
             <i class="fas fa-user-plus d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Signup</span>
-          </a>
-          <a class="btn btn-rounded btn-outline mr-3 px-3" href="" target="_blank" v-if="isLoggedIn">
+          </router-link>
+          <router-link :to="{ name: 'UserOrders' }" class="btn btn-rounded btn-outline mr-3 px-3" v-if="isLoggedIn">
             <i class="fas fa-user-plus d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Dashboard</span>
-          </a>
-          <a class="btn btn-rounded btn-solid px-3" href="signup.html" target="_blank">
+          </router-link>
+          <router-link class="btn btn-rounded btn-solid px-3" :to="{ name: 'Cart' }">
             <i class="fas fa-shopping-cart d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Cart</span>
             <sup class="badge badge-danger" v-if="cartCount > 0">{{ cartCount }}</sup>
-          </a>
+          </router-link>
         </li>
           <!-- Mobile Navigation -->
           <li class="st-nav-section st-nav-mobile nav-item">
@@ -42,8 +42,15 @@
                   <template v-if="categories.length > 0">
                     <a v-for="category in categories" :key="category.id" href="javascript:void(0)" :class="[isActive == category.name ? 'active-link' : '']" class="st-root-link nav-link margin-extra" @click.prevent="isActiveModel(category.name)">{{ category.name }}</a>
                   </template>
-                    <a @click.prevent="isActiveModel('Login')" :class="[isActive == 'Login' ? 'active-link' : '']" class="st-root-link nav-link margin-extra" href="javascript:void(0)">Login </a>
-                      <a @click.prevent="isActiveModel('Signup')" :class="[isActive == 'Signup' ? 'active-link' : '']" class="st-root-link nav-link margin-extra" href="javascript:void(0)">Signup </a>
+                    <router-link :to="{ name: 'Login' }" @click.prevent="isActiveModel('Login')" :class="[isActive == 'Login' ? 'active-link' : '']" class="st-root-link nav-link margin-extra" href="javascript:void(0)" v-if="!isLoggedIn">Login </router-link>
+                      <router-link :to="{ name: 'Register' }" @click.prevent="isActiveModel('Signup')" :class="[isActive == 'Signup' ? 'active-link' : '']" class="st-root-link nav-link margin-extra" href="javascript:void(0)" v-if="!isLoggedIn">Signup </router-link>
+                      <router-link :to="{ name: 'UserOrders' }" class="btn btn-rounded btn-outline mr-3 px-3" v-if="isLoggedIn">
+                        <i class="fas fa-user-plus d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Dashboard</span>
+                      </router-link>
+                      <router-link class="btn btn-rounded btn-solid px-3" :to="{ name: 'Cart' }">
+                        <i class="fas fa-shopping-cart d-none d-md-inline mr-md-0 mr-lg-2"></i> <span class="d-md-none d-lg-inline">Cart</span>
+                        <sup class="badge badge-danger" v-if="cartCount > 0">{{ cartCount }}</sup>
+                      </router-link>
                 </div>
               </div>
             </div>
